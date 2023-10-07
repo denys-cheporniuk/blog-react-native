@@ -8,7 +8,12 @@ const ACTIONS = {
 const blogReducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.ADD_POST:
-      return [...state, action.payload];
+      return [
+        ...state,
+        {
+          id: Math.floor(Math.random() * 9999),
+          ...action.payload,
+        }];
 
     case ACTIONS.DELETE_POST:
       return state.filter(post => post.id !== action.payload);
@@ -22,8 +27,12 @@ const addPost = (dispatch) => (post) => (
   dispatch({ type: ACTIONS.ADD_POST, payload: post })
 )
 
+const deletePost = (dispatch) => (postId) => (
+  dispatch({ type: ACTIONS.DELETE_POST, payload: postId })
+)
+
 export const { Context, Provider } = createDataContext(
   blogReducer,
-  { addPost },
+  { addPost, deletePost },
   [],
 )
