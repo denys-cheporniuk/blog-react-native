@@ -1,6 +1,5 @@
 import createDataContext from "./createDataContext";
 import server from '../api/server';
-import axios from "axios";
 
 const ACTIONS = {
   GET_POSTS: 'GET_POSTS',
@@ -31,11 +30,13 @@ const blogReducer = (state, action) => {
 const getPosts = (dispatch) => async () => {
   const response = await server.get('/blogPosts');
 
+  console.log('getPosts');
+
   dispatch({ type: ACTIONS.GET_POSTS, payload: response.data })
 }
 
 const addPost = (dispatch) => async ({ title, content }, callback) => {
-  await axios.post('/blogPosts', { title, content });
+  await server.post('/blogPosts', { title, content });
 
   if (callback) {
     callback();
@@ -43,13 +44,13 @@ const addPost = (dispatch) => async ({ title, content }, callback) => {
 }
 
 const deletePost = (dispatch) => async (postId) => {
-  await server.delete(`/blogPost/${postId}`);
+  await server.delete(`/blogPosts/${postId}`);
 
   dispatch({type: ACTIONS.DELETE_POST, payload: postId})
 }
 
 const editPost = (dispatch) => async ({ id, title, content }, callback) => {
-  await server.put(`/blogPost/${id}`, { title, content })
+  await server.put(`/blogPosts/${id}`, { title, content })
 
   dispatch({ type: ACTIONS.EDIT_POST, payload: { id, title, content } });
 

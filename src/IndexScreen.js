@@ -19,10 +19,10 @@ const IndexScreen = () => {
   useEffect(() => {
     getPosts()
 
-    const listener = navigation.addListener('didFocus', () => getPosts());
+    const listener = navigation.addListener('focus', () => getPosts());
 
     return listener;
-  }, []);
+  }, [navigation]);
 
   useEffect(() => {
     navigation.setOptions({

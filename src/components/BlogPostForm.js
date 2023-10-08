@@ -7,10 +7,7 @@ const BlogPostForm = ({ initialValues, onSubmit }) => {
 
   const submit = useCallback(() => {
     onSubmit(postTitle, postContent);
-
-    setPostTitle('')
-    setPostContent('');
-  }, [])
+  }, [postTitle, postContent])
 
   return (
     <View>

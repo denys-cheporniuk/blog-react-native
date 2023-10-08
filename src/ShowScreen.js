@@ -21,7 +21,7 @@ const ShowScreen = ({ route }) => {
 
   const selectedPost = useMemo(() => (
     state.find(post => post.id === id)
-  ), [id]);
+  ), [state, id]);
 
   return (
     <View>
