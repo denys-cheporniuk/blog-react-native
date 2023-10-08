@@ -12,15 +12,23 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 
 const IndexScreen = () => {
-  const { state, deletePost } = useContext(BlogContext);
+  const { state, getPosts, deletePost } = useContext(BlogContext);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    getPosts()
+
+    const listener = navigation.addListener('didFocus', () => getPosts());
+
+    return listener;
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.navigate('Create')}>
-          <Feather name="plus" size={30} style={styles.addIcon} />
+          <Feather name="plus" size={30} style={styles.iconAdd} />
         </TouchableOpacity>
       ),
     });
@@ -37,7 +45,7 @@ const IndexScreen = () => {
               <Text style={styles.title}>{item.title}</Text>
 
               <TouchableOpacity onPress={() => deletePost(item.id)}>
-                <Feather style={styles.icon} name="trash" />
+                <Feather style={styles.iconTrash} name="trash" />
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -60,12 +68,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 
-  icon: {
+  iconTrash: {
     fontSize: 24,
     padding: 5,
   },
 
-  addIcon: {
+  iconAdd: {
     marginRight: 20,
   }
 })

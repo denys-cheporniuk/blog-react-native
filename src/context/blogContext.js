@@ -1,20 +1,17 @@
 import createDataContext from "./createDataContext";
+import server from '../api/server';
+import axios from "axios";
 
 const ACTIONS = {
-  ADD_POST: 'ADD_POST',
+  GET_POSTS: 'GET_POSTS',
   DELETE_POST: 'DELETE_POST',
   EDIT_POST: 'EDIT_POST',
 }
 
 const blogReducer = (state, action) => {
   switch (action.type) {
-    case ACTIONS.ADD_POST:
-      return [
-        ...state,
-        {
-          id: Math.floor(Math.random() * 9999),
-          ...action.payload,
-        }];
+    case ACTIONS.GET_POSTS:
+      return [...action.payload];
 
     case ACTIONS.DELETE_POST:
       return state.filter(post => post.id !== action.payload);
@@ -31,20 +28,30 @@ const blogReducer = (state, action) => {
   }
 }
 
-const addPost = (dispatch) => (post, callback) => {
-  dispatch({type: ACTIONS.ADD_POST, payload: post});
+const getPosts = (dispatch) => async () => {
+  const response = await server.get('/blogPosts');
+
+  dispatch({ type: ACTIONS.GET_POSTS, payload: response.data })
+}
+
+const addPost = (dispatch) => async ({ title, content }, callback) => {
+  await axios.post('/blogPosts', { title, content });
 
   if (callback) {
     callback();
   }
 }
 
-const deletePost = (dispatch) => (postId) => (
-  dispatch({ type: ACTIONS.DELETE_POST, payload: postId })
-)
+const deletePost = (dispatch) => async (postId) => {
+  await server.delete(`/blogPost/${postId}`);
 
-const editPost = (dispatch) => (post, callback) => {
-  dispatch({ type: ACTIONS.EDIT_POST, payload: post });
+  dispatch({type: ACTIONS.DELETE_POST, payload: postId})
+}
+
+const editPost = (dispatch) => async ({ id, title, content }, callback) => {
+  await server.put(`/blogPost/${id}`, { title, content })
+
+  dispatch({ type: ACTIONS.EDIT_POST, payload: { id, title, content } });
 
   if (callback) {
     callback();
@@ -53,6 +60,6 @@ const editPost = (dispatch) => (post, callback) => {
 
 export const { Context, Provider } = createDataContext(
   blogReducer,
-  { addPost, deletePost, editPost },
+  { getPosts, addPost, deletePost, editPost },
   [],
 )
